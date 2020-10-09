@@ -1,3 +1,5 @@
 .idea/
 venv/
 *.pyc
+/env/
+/tests/data/internal_data.json

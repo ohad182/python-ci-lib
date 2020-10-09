@@ -1,6 +1,8 @@
+import argparse
 import os
 import errno
 import datetime
+import json
 
 workspace = ""
 
@@ -89,3 +91,58 @@ def seconds_to_timestamp(duration):
         return '{} day(s) {:02d}:{:02d}:{:02d}'.format(int(days), int(hours), int(minutes), int(seconds))
     else:
         return '{:02d}:{:02d}:{:02d}'.format(int(hours), int(minutes), int(seconds))
+
+
+def index_of(array, item):
+    """
+    Checks if item is in array and returns its index, if not found returns -1
+    :param array: the array to search in
+    :param item: the item to find
+    :return: item index in array or -1 if not present
+    """
+    try:
+        return array.index(item)
+    except ValueError:
+        return -1
+
+
+def try_parse_int(num_str):
+    try:
+        return int(num_str), True
+    except ValueError:
+        return num_str, False
+
+
+def str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
+def fix_path(path):
+    """
+    Fix given path according to os path sep
+    :param path: the original path (should be combined from cwd + module path)
+    :return: the full fixed path
+    """
+    not_sep = "/" if os.path.sep == "\\" else "\\"
+    return path.replace(not_sep, os.path.sep)
+
+
+def encode_utf(s):
+    if s is not None and not isinstance(s, str):
+        s = s.encode('utf-8')
+    return s
+
+
+def read_json(full_path):
+    json_dict = None
+    if os.path.exists(full_path):
+        with open(full_path, 'r') as conf_file:
+            json_dict = json.load(conf_file)
+    return json_dict

@@ -85,7 +85,7 @@ class Execute(object):
             self.output_stream.write(line)
             self.output_stream.flush()
 
-    def get_output(self, strip=True, exclude_command=False):
+    def get_output(self, strip=True, exclude_command=False, exclude_cwd=False):
         if self.output_content is None:
             if isinstance(self.output_stream, StringIO):  # in case working with IO object
                 self.output_content = self.output_stream.getvalue()
@@ -97,12 +97,16 @@ class Execute(object):
         if exclude_command:
             cmd = self.get_command_as_str()
             output = output.replace(cmd, "", 1)
+        if exclude_cwd and "running in " in output:
+            first_newline_index = output.index("\n")
+            output = output[first_newline_index + 1:]
+
         if strip:
             output = output.strip()
         return output
 
-    def get_output_lines(self, strip=True):
-        return self.get_output(strip=strip).splitlines()
+    def get_output_lines(self, strip=True, exclude_command=False, exclude_cwd=False):
+        return self.get_output(strip=strip, exclude_command=exclude_command, exclude_cwd=exclude_cwd).splitlines()
 
     def kill(self):
         self.running_process.kill()
