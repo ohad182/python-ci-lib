@@ -3,6 +3,7 @@ import os
 import errno
 import datetime
 import json
+import shutil
 
 workspace = ""
 
@@ -27,6 +28,15 @@ def create_dir_for_file(path):
         except OSError as ose:
             if ose.errno != errno.EEXIST:
                 raise
+
+
+def clear_directory(directory_path):
+    for item in os.listdir(directory_path):
+        item_path = os.path.join(directory_path, item)
+        if os.path.isfile(item_path) or os.path.islink(item_path):
+            os.unlink(item)
+        elif os.path.isdir(item_path):
+            shutil.rmtree(item_path)
 
 
 def get_same_seq_count(str1, str2):
