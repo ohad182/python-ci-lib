@@ -193,15 +193,27 @@ def resolve_tag_on_remote(cwd, log_file, fix=False):
     return local_tag
 
 
-def get_next_tag(current_tag):
+def get_next_tag(current_tag, delimiter='_'):
+    """
+    Generates the next tag based on the current tag.
+    takes last part from split by delimiter and increments it by 1, then re-assemble
+    :param current_tag: the current tag of the repository
+    :param delimiter: the delimiter the tag has from the counter
+    :return:
+    """
     next_tag = None
     if current_tag is not None:
-        tag_body, tag_counter = current_tag.rsplit("_", 1)
+        tag_body, tag_counter = current_tag.rsplit(delimiter, 1)
         tag_counter = int(tag_counter) + 1
         tag_counter_len = 3 if len(str(tag_counter)) < 3 else len(str(tag_counter))
-        next_tag = "{}_{}".format(tag_body, '{number:0{width}d}'.format(number=tag_counter, width=tag_counter_len))
+        next_tag = "{}{}{}".format(tag_body, delimiter,
+                                   '{number:0{width}d}'.format(number=tag_counter, width=tag_counter_len))
 
     return next_tag
+
+
+def make_baseline(main_project, baseline_list, latest):
+    pass
 
 
 def get_submodules_from_gitmodules(cwd):
@@ -270,3 +282,17 @@ def get_info(cwd):
     project.full_path = cwd
     collect_git_info(project, None)
     return project
+
+
+class Baseline(object):
+    def __init__(self):
+        pass
+
+    def pre_baseline(self):
+        pass  # should make abstract
+
+    def post_baseline(self):
+        pass  # should make abstract
+
+    def run(self):
+        pass

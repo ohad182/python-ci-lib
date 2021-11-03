@@ -115,6 +115,9 @@ class Execute(object):
         self.kill()
         self.exception = ExecuteTimeout(execute_result=self)
 
+    def timed_out(self):
+        return self.exception is not None and isinstance(self.exception, ExecuteTimeout)
+
     def execute(self, cmd, output_full_path=None, cwd=None, env=None, timeout_sec=7200):
         self.command = cmd
         if isinstance(cmd, str):
